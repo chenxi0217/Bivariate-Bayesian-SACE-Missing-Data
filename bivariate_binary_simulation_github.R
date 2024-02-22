@@ -8,7 +8,7 @@ require("dplyr")
 require("truncnorm")
 ### function to sample from the Wishart distribution
 rwish<-function(n,nu0,S0)
-{
+{ 
   
   sS0 <- chol(S0)
   S<-array( dim=c( dim(S0),n ) )
