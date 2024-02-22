@@ -1,5 +1,7 @@
-# MVSACE
-  This folder includes simulation codes for the manuscript titled "Bayesian inference for survivor average causal effects in cluster-randomized trials with multivariate outcomes subject to complex missing data" Authors: Guangyu Tong*, Chenxi Li, Eric Velasquez, Michael O. Harhay, Fan Li 
+# Bivariate Bayesian Sace Missing Data
+  This folder includes simulation codes for the manuscript titled "Bayesian model for survivor average causal effects in
+cluster-randomized trials with a bivariate outcome and complex
+missingness" Authors: Guangyu Tong*, Chenxi Li, Eric Velasquez, Michael O. Harhay, Fan Li 
 
   
   Files: This folder includes two files as follows:
