@@ -211,11 +211,11 @@ mvsampler<-function(df,S=5000){
   PHI<-rep(0,S)
   GV<-matrix(NA,3,S)
   
-  tgts1=which(is.na(Y1)&surv==1&D==1) # survive but missing outcomes under treated
-  tgts2=which(is.na(Y1)&surv==1&D==0)# survive but missing outcomes under control
-  tgtss=which(is.na(Y1)&is.na(surv)) # missing both outcomes and survival status
-  miss=c(which(is.na(Y1)&is.na(surv)),which(is.na(Y1)&surv==1)) # all individual with misingness
-  nonmiss=c(1:N)[-miss] # individuals without missingness
+  tgts1=which(is.na(Y1)&surv==1&D==1) 
+  tgts2=which(is.na(Y1)&surv==1&D==0)
+  tgtss=which(is.na(Y1)&is.na(surv)) 
+  miss=c(which(is.na(Y1)&is.na(surv)),which(is.na(Y1)&surv==1))
+  nonmiss=c(1:N)[-miss] 
   Nst<-length(intersect(which(!is.na(Y1)),nonmiss))
   
   #missing value imputation for individuals who survive with missing outcomes
