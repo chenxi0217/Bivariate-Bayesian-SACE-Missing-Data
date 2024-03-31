@@ -49,9 +49,7 @@ gendata<-function(N=1500,s=60,cv=0.3){
   ##strata model parameters
   beta=c(-5.5,0.5,-0.7) #first Probit layer effect (strata proportion with 0.2 never survivors, 0.2 protected and 0.6 always survivors)
   gamma=c(-5.8,-0.6,0.4) #second Probit layer effect(strata proportion with 0.2 never survivors, 0.2 protected and 0.6 always survivors)
-  #beta=c(-8.5,0.5,-0.7)  #first Probit layer effect(strata proportion with 0.1 never survivors, 0.1 protected and 0.8 always survivors)
-  #gamma=c(-8.8,-0.6,0.4) #second Probit layer effect(strata proportion with 0.1 never survivors, 0.1 protected and 0.8 always survivors)
-  
+
   phi2<-1 #cluster variance
 
   #Cluster effect 
@@ -507,7 +505,6 @@ sim<-function(S=10000,nsim=50,N=6000, s=60,seed=1234567){
     ALPHA110b[i,,]<-otp$ALPHA110b
     BETA[i,,]<-otp$BETA
     GAMMA[i,,]<-otp$GAMMA
-    
     PHI[i,]<-otp$PHI
     TAU[i,,]<-otp$TAU
     SIGMA[i,,]<-otp$SIGMA
@@ -780,7 +777,68 @@ sumstat<-function(sim1,afterburn=2501:10000){
   
   coverage<-c(coverage,g1,g2,g3) 
   
-  return(data.frame(param,true_val,pestimate,rbias,coverage))
+  
+  
+  pestimate_var<-c(
+    mean(rowVars(sim1$ALPHA111a[,1,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA111a[,2,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA111a[,3,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA111a[,4,afterburn]),na.rm=T),
+    
+    mean(rowVars(sim1$ALPHA101a[,1,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA101a[,2,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA101a[,3,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA101a[,4,afterburn]),na.rm=T),
+    
+    mean(rowVars(sim1$ALPHA110a[,1,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA110a[,2,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA110a[,3,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA110a[,4,afterburn]),na.rm=T),
+    
+    mean(rowVars(sim1$ALPHA111b[,1,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA111b[,2,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA111b[,3,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA111b[,4,afterburn]),na.rm=T),
+    
+    mean(rowVars(sim1$ALPHA101b[,1,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA101b[,2,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA101b[,3,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA101b[,4,afterburn]),na.rm=T),
+    
+    mean(rowVars(sim1$ALPHA110b[,1,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA110b[,2,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA110b[,3,afterburn]),na.rm=T),
+    mean(rowVars(sim1$ALPHA110b[,4,afterburn]),na.rm=T),
+    
+    mean(rowVars(sim1$BETA[,1,afterburn]),na.rm=T),
+    mean(rowVars(sim1$BETA[,2,afterburn]),na.rm=T),
+    mean(rowVars(sim1$BETA[,3,afterburn]),na.rm=T),
+    
+    mean(rowVars(sim1$GAMMA[,1,afterburn]),na.rm=T),
+    mean(rowVars(sim1$GAMMA[,2,afterburn]),na.rm=T),
+    mean(rowVars(sim1$GAMMA[,3,afterburn]),na.rm=T),
+    
+    mean(rowVars(sim1$TAU[,1, afterburn]),na.rm=T),
+    mean(rowVars(sim1$TAU[,2, afterburn]),na.rm=T),
+    mean(rowVars(sim1$TAU[,4, afterburn]),na.rm=T),
+    
+    mean(rowVars(sim1$PHI[,afterburn]),na.rm=T),
+    
+    mean(rowVars(sim1$SIGMA[,1,afterburn]),na.rm=T),
+    mean(rowVars(sim1$SIGMA[,2,afterburn]),na.rm=T),
+    mean(rowVars(sim1$SIGMA[,4,afterburn]),na.rm=T),
+    
+    mean(rowVars(sim1$GV[,1,afterburn]),na.rm=T),
+    mean(rowVars(sim1$GV[,2,afterburn]),na.rm=T),
+    mean(rowVars(sim1$GV[,3,afterburn]),na.rm=T),
+    
+    mean(rowVars(sim1$TE[,1,afterburn]),na.rm=T),
+    mean(rowVars(sim1$TE[,2,afterburn]),na.rm=T),
+    mean(rowVars(sim1$TE[,3,afterburn]),na.rm=T),
+    mean(rowVars(sim1$TE[,4,afterburn]),na.rm=T)
+  )
+  
+  return(data.frame(param,true_val,pestimate,rbias,coverage,pestimate_var))
 }
 
 icc_calculation<-function(sim1,afterburn=2501:1000){
@@ -800,7 +858,7 @@ icc_calculation<-function(sim1,afterburn=2501:1000){
          rho212<-mean(rowMeans(RHO212),na.rm=T))
   
   #coverage
-  val.true=c(1/6,2/12,0.05,0.30)
+  val.true=c(1/6,2/12,0.08333333,0.5)
   
   rbias<-(icc-val.true)/val.true*100
   
@@ -816,7 +874,12 @@ icc_calculation<-function(sim1,afterburn=2501:1000){
   
   coverage<-c(g1,g2,g3,g4)
   
-  return(cbind( icc, val.true, rbias, coverage))
+  pestimate_var<-c(mean(rowVars(RHO1),na.rm=T),
+                   mean(rowVars(RHO2),na.rm=T),
+                   mean(rowVars(RHO112),na.rm=T),
+                   mean(rowVars(RHO212),na.rm=T))
+  
+  return(cbind( icc, val.true, rbias, coverage,pestimate_var))
   
 }
 
