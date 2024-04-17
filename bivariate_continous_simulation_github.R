@@ -417,6 +417,16 @@ mvsampler<-function(df,S=5000){
     r=rbinom(length(c(tgt1)),1,(A/(A+B)))
     GP<-rep(2,length(c(tgt1)))-r
     G[c(tgt1)]<-GP
+
+    #impute for G for missing survival status and missing outcome
+    pp<-pnorm(X[tgtss,1:3]%*%t(beta)+chin1[tgtss])
+    G00 <- rbinom(length(tgtss), 1, pp)
+    G01<-rep(0,length(tgtss))
+    tgt<-which(G00==0)
+    p1<-pnorm(X[tgtss,][tgt,1:3]%*%t(gamma)+chin1[tgtss][tgt])
+    G01[tgt]<-rbinom(length(tgt), 1, p1)
+    G11<-rep(1,length(tgtss))-G01-G00
+    G[tgtss]=1*G01+2*G11
     
     #store G percentage
     GV[,i]<-c(length(which(G==0)),length(which(G==1)),length(which(G==2)))/N
